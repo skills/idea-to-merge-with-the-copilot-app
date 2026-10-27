@@ -13,6 +13,6 @@
     "preview": "astro preview --host --port 4321"
   },
   "dependencies": {
-    "astro": "^7.1.6"
+    "astro": "^7.3.3"
   }
 }
