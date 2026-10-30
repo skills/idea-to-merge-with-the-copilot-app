@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "astro dev --host --port 4321",
     "start": "astro dev --host --port 4321",
+    "test": "node --test tests/bookmarks.test.mjs",
     "build": "astro build",
     "preview": "astro preview --host --port 4321"
   },

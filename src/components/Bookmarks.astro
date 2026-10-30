@@ -7,8 +7,14 @@
 // file. Astro runs that script in the browser, never during the build, so
 // browser-only APIs are safe there.
 //
-// You will implement the behavior in Step 3.
 ---
+<section class="bookmark-app" aria-labelledby="bookmark-heading">
+  <div class="app-intro">
+    <p class="eyebrow">Mona / local-first links</p>
+    <h2 id="bookmark-heading">Keep the good ones close.</h2>
+    <p class="app-description">Turn any link into a tidy, memorable bookmark you can find on this device.</p>
+  </div>
+
 <form id="add-bookmark">
   <div class="field">
     <label for="url">Link to save</label>
@@ -38,33 +44,141 @@
 <ul id="bookmark-list" aria-label="Saved bookmarks" aria-live="polite">
   <!-- Bookmarks render here in the browser. -->
 </ul>
+</section>
 
 <script>
-  // CLIENT-SIDE BOUNDARY — runs in the browser only.
-  //
-  // TODO (Step 3): implement the bookmarks feature here.
-  //   1. On form submit, call event.preventDefault() FIRST so the page
-  //      never reloads, then read and validate the original URL.
-  //   2. Generate a short slug with a "mona-" prefix (for example, base62
-  //      of a counter or hash → "mona-7fk2").
-  //   3. Save the original URL and its slug, then persist them in the browser.
-  //   4. Render each saved bookmark into #bookmark-list as a row (li.bookmark) with:
-  //        - the original URL as a link (.url) that opens in a new tab,
-  //        - its short slug shown as a badge (.slug), and
-  //        - a "Copy" button (.copy) that copies the slug.
-  //   5. Toggle empty vs. saved state: hide #empty-state and show #list-header
-  //      (the "Saved bookmarks" heading + "Clear all" button) once at least one
-  //      bookmark exists; reverse it when the list is empty.
-  //   6. Wire the #clear-all button to remove every saved bookmark (clear the
-  //      list, clear browser storage) after a quick confirm.
-  //   7. On page load, read the saved bookmarks from storage and render
-  //      them so the list persists across reloads.
-  //
-  // Because this code lives in a client <script>, browser storage APIs are
-  // safe to use here without breaking the static build.
+  import { createSlug, formatBookmark, loadBookmarks, normalizeUrl } from '../lib/bookmarks.mjs';
+
+  const STORAGE_KEY = 'mona-bookmarks';
   const form = document.getElementById('add-bookmark');
+  const input = document.getElementById('url');
+  const list = document.getElementById('bookmark-list');
+  const emptyState = document.getElementById('empty-state');
+  const listHeader = document.getElementById('list-header');
+  const clearAll = document.getElementById('clear-all');
+
+  let bookmarks = [];
+
+  function readBookmarks() {
+    try {
+      return loadBookmarks(window.localStorage.getItem(STORAGE_KEY));
+    } catch {
+      return [];
+    }
+  }
+
+  function saveBookmarks() {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarks));
+    } catch {
+      // Storage can be unavailable or full; the in-memory list still works.
+    }
+  }
+
+  function render() {
+    if (!list || !emptyState || !listHeader) return;
+
+    list.replaceChildren();
+    bookmarks.forEach((bookmark) => {
+      const item = document.createElement('li');
+      item.className = 'bookmark';
+      item.setAttribute('aria-label', formatBookmark(bookmark));
+
+      const link = document.createElement('a');
+      link.className = 'url';
+      link.href = bookmark.url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = bookmark.url;
+
+      const separator = document.createTextNode(' :: ');
+      const slug = document.createElement('span');
+      slug.className = 'slug';
+      slug.textContent = bookmark.slug;
+
+      const copy = document.createElement('button');
+      copy.className = 'copy';
+      copy.type = 'button';
+      copy.textContent = 'Copy';
+      copy.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(bookmark.slug);
+          copy.textContent = 'Copied';
+          window.setTimeout(() => { copy.textContent = 'Copy'; }, 1200);
+        } catch {
+          copy.textContent = 'Copy failed';
+        }
+      });
+
+      item.append(link, separator, slug, copy);
+      list.append(item);
+    });
+
+    const hasBookmarks = bookmarks.length > 0;
+    emptyState.hidden = hasBookmarks;
+    listHeader.hidden = !hasBookmarks;
+  }
+
+  // Keep this as the first submit operation so errors cannot trigger native submission.
   form?.addEventListener('submit', (event) => {
-    event.preventDefault(); // keep this — stops the page from reloading
-    // Implement in Step 3.
+    event.preventDefault();
+
+    try {
+      const url = normalizeUrl(input?.value);
+      let slug = createSlug();
+      const existingSlugs = new Set(bookmarks.map((bookmark) => bookmark.slug));
+      while (existingSlugs.has(slug)) slug = createSlug(`${Date.now()}-${Math.random()}`);
+
+      bookmarks = [...bookmarks, { url, slug }];
+      saveBookmarks();
+      render();
+      if (input) {
+        input.value = '';
+        input.focus();
+      }
+    } catch {
+      input?.focus();
+    }
   });
+
+  clearAll?.addEventListener('click', () => {
+    if (!window.confirm('Clear all saved bookmarks?')) return;
+    bookmarks = [];
+    try {
+      window.localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // Storage can be unavailable; clear the in-memory list regardless.
+    }
+    render();
+  });
+
+  bookmarks = readBookmarks();
+  render();
 </script>
+
+<style>
+  .bookmark-app {
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) * 1.5);
+    background: color-mix(in srgb, var(--accent) 4%, transparent);
+    box-shadow: 0 1rem 3rem color-mix(in srgb, currentColor 8%, transparent);
+  }
+  .app-intro { margin-bottom: 1.25rem; }
+  .eyebrow {
+    margin: 0 0 0.4rem;
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .app-intro h2 {
+    margin: 0;
+    font-family: var(--font-head);
+    font-size: 1.25rem;
+  }
+  .app-description { margin: 0.35rem 0 0; color: var(--muted); font-size: 0.9rem; }
+  .bookmark .url { color: inherit; }
+  .bookmark .slug { white-space: nowrap; }
+</style>
