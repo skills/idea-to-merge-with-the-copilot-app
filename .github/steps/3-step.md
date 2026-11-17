@@ -24,6 +24,10 @@ A few things to know about the build:
 - [Working with agent sessions in the Copilot App](https://docs.github.com/en/copilot/how-tos/github-copilot-app/agent-sessions)
 - [Astro components and client directives](https://docs.astro.build/en/reference/directives-reference/#client-directives)
 
+#### For further reading
+
+- Explore [GitHub Copilot Fusion](https://docs.github.com/en/copilot/concepts/models/copilot-fusion) for model selection and orchestration.
+
 ### ⌨️ Activity 1: Build the feature and open the pull request
 
 > [!TIP]
