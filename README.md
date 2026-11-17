@@ -21,6 +21,10 @@ In this exercise, you will:
 4. Preview the running app in a **browser canvas** and submit your proof.
 5. Plan the next release in an **editor canvas** and turn it into tracked issues.
 
+## For further reading
+
+- Explore [GitHub Copilot Fusion](https://docs.github.com/en/copilot/concepts/models/copilot-fusion) for model selection and orchestration.
+
 ### How to start this exercise
 
 Simply copy the exercise to your account, then give your favorite Octocat (Mona) **about 20 seconds** to prepare the first lesson, then **refresh the page**.
