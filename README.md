@@ -9,7 +9,7 @@ _Take an idea from a session to a merged pull request — entirely in the GitHub
 - **What you'll build**: **Mona's Bookmark Manager App** — a tiny **Astro** app that saves each URL with a generated short slug (like `mona-7fk2`), persisted in the browser with `localStorage`.
 - **Prerequisites**:
   - A GitHub Copilot subscription (Free, Pro, Pro+, Business, or Enterprise) — you'll install and sign in to the **GitHub Copilot App** in Step 1
-  - **Node.js 22.12+ and npm** installed locally (required by Astro 7; used to run the app in Step 4)
+  - **Node.js 22.23.4+ and npm** installed locally (required by Astro 7; used to run the app in Step 4)
   - Basic familiarity with GitHub issues and pull requests
 - **How long**: Roughly **55 minutes**; allow a little extra on your first run.
 

@@ -41,7 +41,7 @@ You'll complete every step **inside the app**, using these surfaces:
 To use the GitHub Copilot app, the first step — as you might imagine — is to install it. Versions are available for Windows, macOS, and Linux. Let's install the app, authenticate, and add your exercise repository to the app.
 
 > [!TIP]
-> **New to Node.js?** Step 4 runs the app locally with `npm run dev`, which needs **Node.js 22.12 or newer** (it ships with `npm`). Check what you have with `node --version`; if it's missing or older, install the current LTS from [nodejs.org/en/download](https://nodejs.org/en/download). See [About npm](https://docs.npmjs.com/about-npm) for a quick primer. You won't need it until Step 4, so you can install it now or later.
+> **New to Node.js?** Step 4 runs the app locally with `npm run dev`, which needs **Node.js 22.23.4 or newer** (it ships with `npm`). Check what you have with `node --version`; if it's missing or older, install the current LTS from [nodejs.org/en/download](https://nodejs.org/en/download). See [About npm](https://docs.npmjs.com/about-npm) for a quick primer. You won't need it until Step 4, so you can install it now or later.
 
 1. In a browser, open the landing page for the GitHub Copilot app: **https://github.com/features/ai/github-app**. *(This download page is the only step outside the app — everything after install happens inside the Copilot App.)*
 
